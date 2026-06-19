@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier un Matériel - AssetManager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div th:replace="~{fragments/navbar :: sidebar(currentPage='materiels')}"></div>
+    <div th:replace="~{fragments/navbar :: header(pageTitle='Modifier un Actif')}"></div>
+
+    <div id="content">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="mb-4">
+                        <h4 class="fw-bold mb-1">Modifier le matériel</h4>
+                        <p class="text-secondary small">Mettez à jour les informations techniques de l'équipement</p>
+                    </div>
+                    
+                    <form th:action="@{/materiels/edit}" th:object="${materiel}" method="post">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="mb-3">
+                            <label for="ref" class="form-label">Référence Interne</label>
+                            <input type="text" th:field="*{ref}" class="form-control" id="ref" placeholder="ex: LAP-2026-001" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="type" class="form-label">Type d'équipement</label>
+                                <input type="text" th:field="*{type}" class="form-control" id="type" placeholder="ex: Laptop" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="marque" class="form-label">Marque / Constructeur</label>
+                                <input type="text" th:field="*{marque}" class="form-control" id="marque" placeholder="ex: Apple, Dell..." required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="etat" class="form-label">État de mise en service</label>
+                            <select th:field="*{etat}" class="form-select" id="etat" required>
+                                <option th:each="e : ${etats}" th:value="${e}" th:text="${e}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="dateAchat" class="form-label">Date d'acquisition</label>
+                            <input type="date" th:field="*{dateAchat}" class="form-control" id="dateAchat" required>
+                        </div>
+                        
+                        <div class="d-flex gap-3 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a th:href="@{/materiels}" class="btn btn-outline-secondary px-4">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

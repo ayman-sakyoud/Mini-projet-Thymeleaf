@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- Sidebar Fragment -->
+    <div th:fragment="sidebar(currentPage)" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-server me-2"></i>
+            <span>AssetManager</span>
+        </div>
+        <nav class="nav flex-column mt-3">
+            <a class="nav-link" th:href="@{/dashboard}" th:classappend="${currentPage == 'dashboard' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </a>
+            <a class="nav-link" th:href="@{/materiels}" th:classappend="${currentPage == 'materiels' ? 'active' : ''}">
+                <i class="fas fa-laptop"></i>
+                Inventaire
+            </a>
+            <a class="nav-link" th:href="@{/employes}" th:classappend="${currentPage == 'employes' ? 'active' : ''}">
+                <i class="fas fa-users"></i>
+                Annuaire
+            </a>
+            <a class="nav-link" th:href="@{/affectations}" th:classappend="${currentPage == 'affectations' ? 'active' : ''}">
+                <i class="fas fa-exchange-alt"></i>
+                Affectations
+            </a>
+        </nav>
+    </div>
+
+    <!-- Header Fragment (Top Navbar) -->
+    <div th:fragment="header(pageTitle)" class="top-navbar">
+        <h1 class="page-title" th:text="${pageTitle ?: 'Tableau de bord'}">Tableau de bord</h1>
+        
+        <div class="user-profile">
+            <div class="text-end d-none d-md-block">
+                <div class="fw-bold small">Admin System</div>
+                <div class="text-secondary" style="font-size: 0.75rem;">IT Department</div>
+            </div>
+            <div class="user-avatar">
+                AD
+            </div>
+        </div>
+    </div>
+</body>
+</html>

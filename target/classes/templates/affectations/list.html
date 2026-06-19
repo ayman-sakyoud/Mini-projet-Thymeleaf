@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Affectations - AssetManager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div th:replace="~{fragments/navbar :: sidebar(currentPage='affectations')}"></div>
+    <div th:replace="~{fragments/navbar :: header(pageTitle='Suivi des Affectations')}"></div>
+
+    <div id="content">
+        <!-- Quick Stats for Assignments -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary">
+                        <i class="fas fa-link fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-bold text-uppercase">Affectations Actives</div>
+                        <div class="h4 m-0 fw-bold" th:text="${affectations.size()}">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3 text-success">
+                        <i class="fas fa-undo fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-bold text-uppercase">Retours Enregistrés</div>
+                        <div class="h4 m-0 fw-bold">12</div> <!-- Mocked stat -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 border-0 shadow-sm d-flex flex-row align-items-center gap-3">
+                    <div class="rounded-circle bg-danger bg-opacity-10 p-3 text-danger">
+                        <i class="fas fa-ban fa-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary small fw-bold text-uppercase">Annulations</div>
+                        <div class="h4 m-0 fw-bold">3</div> <!-- Mocked stat -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters & Action -->
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <form th:action="@{/affectations}" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Filtrer par Service</label>
+                    <input type="text" name="service" class="form-control" th:value="${selectedService}" placeholder="ex: RH, Marketing...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Statut du contrat</label>
+                    <select name="statut" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        <option th:each="s : ${statuts}" th:value="${s}" th:text="${s}" th:selected="${s == selectedStatut}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-dark flex-grow-1">
+                        <i class="fas fa-search me-2"></i>Rechercher
+                    </button>
+                    <a th:href="@{/affectations/add}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Nouvelle Affectation
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Assignments Table -->
+        <div class="table-container shadow-sm">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Collaborateur</th>
+                        <th>Équipement Assigné</th>
+                        <th>Période d'Affectation</th>
+                        <th>Statut</th>
+                        <th class="text-end">Gestion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="a : ${affectations}">
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.75rem; font-weight: 700;">
+                                    <span th:text="${#strings.substring(a.employe.nom, 0, 1)}">U</span>
+                                </div>
+                                <div>
+                                    <div class="fw-bold" th:text="${a.employe.nom}">Nom Employé</div>
+                                    <div class="text-secondary small" th:text="${a.employe.service}">Service</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold" th:text="${a.materiel.type}">PC Portatif</div>
+                            <div class="text-primary small fw-bold" th:text="${a.materiel.ref}">REF-001</div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-secondary small">Du</span>
+                                <span class="fw-medium" th:text="${a.dateDebut}">01/01/2023</span>
+                                <span class="text-secondary small">au</span>
+                                <span class="fw-medium text-danger" th:text="${a.dateFin ?: 'Indéterminé'}">31/12/2023</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span th:if="${a.statut.name() == 'ACTIVE'}" class="badge-pill badge-success-custom">
+                                <i class="fas fa-check-circle me-1"></i> Active
+                            </span>
+                            <span th:if="${a.statut.name() == 'RETOURNEE'}" class="badge-pill badge-secondary-custom" style="background: rgba(100, 116, 139, 0.1); color: var(--text-secondary);">
+                                <i class="fas fa-history me-1"></i> Retournée
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                    <li><a class="dropdown-item py-2" th:href="@{/affectations/edit/{id}(id=${a.id})}"><i class="fas fa-edit me-2 text-primary"></i> Modifier</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2 text-danger" th:href="@{/affectations/delete/{id}(id=${a.id})}" onclick="return confirm('Mettre fin à cette affectation ?')"><i class="fas fa-trash-alt me-2"></i> Supprimer</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${affectations.isEmpty()}">
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-secondary mb-3">
+                                <i class="fas fa-link-slash fa-3x mb-3 opacity-25"></i>
+                                <p>Aucun mouvement d'équipement enregistré.</p>
+                            </div>
+                            <a th:href="@{/affectations/add}" class="btn btn-sm btn-primary">Créer une affectation</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
